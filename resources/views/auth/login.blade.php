@@ -45,12 +45,12 @@
                         <input type="email" class="form-control" id="email" name="email" required>
                     </div>
                     <div class="form-group">
-                        <label for="password">Password</label>
+                        <label for="password">Contraseña</label>
                         <input type="password" class="form-control" id="password" name="password" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">Login</button>
+                    <button type="submit" class="btn btn-primary">Iniciar</button>
                 </form>
-                <a href="{{ route('register') }}" class="btn btn-link">Register</a>
+                <a href="{{ route('register') }}" class="btn btn-link">Registrarse</a>
             </div>
         </div>
         <div class="image"></div>

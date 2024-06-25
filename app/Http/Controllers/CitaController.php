@@ -7,33 +7,28 @@ use App\Models\Cita;
 
 class CitaController extends Controller
 {
-    /**
-     * Muestra una lista de todas las citas.
-     *
-     * @return \Illuminate\View\View
-     */
     public function index()
     {
-        $citas = Cita::all(); // Obtener todas las citas
-        return view('home', compact('citas')); // Pasar las citas a la vista
+        if(request()->ajax()){
+        $citas = Cita::all();
+        return response()->json($citas);
     }
 
-    /**
-     * Muestra el formulario para crear una nueva cita.
-     *
-     * @return \Illuminate\View\View
-     */
+    $citas = Cita::all();
+    return view('auth.citas', compact('citas'));
+}
+    
+    public function getEvents()
+    {
+        $citas = Cita::all();
+        return response()->json($citas);
+    }
+
     public function create()
     {
         return view('citas.create');
     }
 
-    /**
-     * Almacena una nueva cita en la base de datos.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -45,42 +40,27 @@ class CitaController extends Controller
             'estado' => 'required|in:pendiente,confirmada,cancelada',
         ]);
 
-        Cita::create($request->all());
+        $cita = Cita::create($request->all());
+
+        if ($request->ajax()) {
+            return response()->json(['success' => 'Cita creada exitosamente.', 'cita' => $cita]);
+        }
 
         return redirect()->route('citas.index')->with('success', 'Cita creada exitosamente.');
     }
 
-    /**
-     * Muestra los detalles de una cita específica.
-     *
-     * @param  int  $id
-     * @return \Illuminate\View\View
-     */
     public function show($id)
     {
         $cita = Cita::findOrFail($id);
         return view('citas.show', compact('cita'));
     }
 
-    /**
-     * Muestra el formulario para editar una cita específica.
-     *
-     * @param  int  $id
-     * @return \Illuminate\View\View
-     */
     public function edit($id)
     {
         $cita = Cita::findOrFail($id);
         return view('citas.edit', compact('cita'));
     }
 
-    /**
-     * Actualiza la información de una cita específica en la base de datos.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -98,12 +78,6 @@ class CitaController extends Controller
         return redirect()->route('citas.index')->with('success', 'Cita actualizada exitosamente.');
     }
 
-    /**
-     * Elimina una cita específica de la base de datos.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function destroy($id)
     {
         $cita = Cita::findOrFail($id);
@@ -112,3 +86,4 @@ class CitaController extends Controller
         return redirect()->route('citas.index')->with('success', 'Cita eliminada exitosamente.');
     }
 }
+

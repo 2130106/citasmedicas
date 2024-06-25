@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
-use App\Models\Paciente; // Agregar el modelo Paciente
 use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -36,43 +34,39 @@ class AuthController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'apellido1' => 'required|string|max:255',
+            'apellido2' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
+            'sexo' => 'required|integer|between:0,2',
+            'role' => 'required|in:doctor,secretaria',
         ]);
 
         $user = User::create([
             'name' => $request->name,
+            'apellido1' => $request->apellido1,
+            'apellido2' => $request->apellido2,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'sexo' => $request->sexo,
+            'role' => $request->role,
         ]);
 
-        Auth::login($user);
+        // Determinar la redirección basada en el rol del usuario registrado
+        if ($request->role == 'doctor') {
+            // Redirigir a la vista del doctor
+            return redirect()->route('auth.home');
+        } elseif ($request->role == 'secretaria') {
+            // Redirigir a la vista de la secretaria
+            return redirect()->route('citas.index');
+        }
 
-        return redirect()->intended('auth.home');
+        // Redirigir a algún lugar por defecto si es necesario
+        return redirect()->intended('home');
     }
 
     public function home()
     {
         return view('auth.home');
-    }
-
-    public function showPacientes()
-    {
-        $pacientes = Paciente::all();
-        return view('pacientes.index', compact('pacientes'));
-    }
-
-    public function storePaciente(Request $request)
-    {
-        $request->validate([
-            'nombre' => 'required|string|max:255',
-            'telefono' => 'required|string|max:20',
-            'estado' => 'required|string|max:50',
-            'fecha_cita' => 'nullable|date',
-        ]);
-
-        Paciente::create($request->all());
-
-        return redirect()->back()->with('success', 'Paciente agregado correctamente.');
     }
 }
