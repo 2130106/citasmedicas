@@ -23,6 +23,15 @@ return new class extends Migration
             $table->integer('sexo')->default(2); // 0: Hombre, 1: Mujer, 2: No prefiero especificar
             $table->string('role')->default('secretaria'); // Puede ser 'doctor' o 'secretaria'
         });
+
+        Schema::create('sessions', function (Blueprint $table) {
+            $table->string('id')->primary();
+            $table->foreignId('user_id')->nullable()->index();
+            $table->string('ip_address', 45)->nullable();
+            $table->text('user_agent')->nullable();
+            $table->longText('payload');
+            $table->integer('last_activity')->index();
+        });
     }
 
     /**
@@ -31,5 +40,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('users');
+        Schema::dropIfExists('sessions');
     }
 };

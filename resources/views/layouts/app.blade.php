@@ -9,12 +9,12 @@
 </head>
 <body>
     <div class="sidebar">
-        <!-- Contenido del sidebar -->
+        
     </div>
 
     <div class="content">
         <div class="header">
-            <!-- Contenido del header -->
+            
         </div>
         
         <div class="main-content">
@@ -22,7 +22,7 @@
         </div>
     </div>
 
-    <!-- Scripts al final para mejorar el rendimiento de carga -->
+    
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

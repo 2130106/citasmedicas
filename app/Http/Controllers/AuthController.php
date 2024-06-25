@@ -54,14 +54,14 @@ class AuthController extends Controller
 
         // Determinar la redirección basada en el rol del usuario registrado
         if ($request->role == 'doctor') {
-            // Redirigir a la vista del doctor
+            //aqui el doctor
             return redirect()->route('auth.home');
         } elseif ($request->role == 'secretaria') {
-            // Redirigir a la vista de la secretaria
+            // secretariaa
             return redirect()->route('citas.index');
         }
 
-        // Redirigir a algún lugar por defecto si es necesario
+        
         return redirect()->intended('home');
     }
 

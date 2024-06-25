@@ -141,7 +141,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
     <script>
         $(document).ready(function() {
-            // Cargar citas desde el servidor
+          
             function fetchCitas() {
                 return $.ajax({
                     url: "{{ route('citas.index') }}",
@@ -150,7 +150,6 @@
                 });
             }
 
-            // Convertir citas a eventos para el calendario
             function convertCitasToEvents(citas) {
                 return citas.map(cita => ({
                     title: cita.paciente,
@@ -160,7 +159,6 @@
                 }));
             }
 
-            // Inicializar el calendario
             function initializeCalendar(citas) {
                 $('#agenda').fullCalendar({
                     header: {

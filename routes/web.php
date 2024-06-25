@@ -30,7 +30,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/citas', [CitaController::class, 'index'])->name('citas.index');
     Route::get('/citas/create', [CitaController::class, 'create'])->name('citas.create');
     Route::post('/citas/store', [CitaController::class, 'store'])->name('citas.store');
-    Route::delete('/citas/destroy/{id}', [CitaController::class, 'destroy'])->name('citas.destroy'); // Cambiar a DELETE
+    Route::delete('/citas/destroy/{id}', [CitaController::class, 'destroy'])->name('citas.destroy');
 
     Route::get('/pacientes', [AuthController::class, 'showPacientes'])->name('pacientes.index');
     Route::post('/pacientes', [AuthController::class, 'storePaciente'])->name('pacientes.store');
