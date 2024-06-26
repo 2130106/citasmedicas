@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Models\Paciente; // Importar el modelo Paciente
 
 class AuthController extends Controller
 {
@@ -23,6 +24,13 @@ class AuthController extends Controller
         }
 
         return redirect('login')->withErrors('Login details are not valid');
+    }
+    public function destroyPaciente($id)
+    {
+        $paciente = Paciente::findOrFail($id);
+        $paciente->delete();
+
+        return redirect()->route('pacientes.index')->with('success', 'Paciente eliminado exitosamente.');
     }
 
     public function showRegisterForm()
@@ -52,16 +60,8 @@ class AuthController extends Controller
             'role' => $request->role,
         ]);
 
-        // Determinar la redirección basada en el rol del usuario registrado
-        if ($request->role == 'doctor') {
-            //aqui el doctor
-            return redirect()->route('auth.home');
-        } elseif ($request->role == 'secretaria') {
-            // secretariaa
-            return redirect()->route('citas.index');
-        }
+     
 
-        
         return redirect()->intended('home');
     }
 
@@ -69,4 +69,38 @@ class AuthController extends Controller
     {
         return view('auth.home');
     }
+
+    public function showPacientes()
+    {
+        // Obtener todos los pacientes de la base de datos
+        $pacientes = Paciente::all();
+        return view('auth.pacientes', compact('pacientes'));
+    }
+
+    public function storePaciente(Request $request)
+    {
+    // Validar y guardar los datos del nuevo paciente
+    $request->validate([
+        'nombre' => 'required|string|max:255',
+        'apellido' => 'required|string|max:255',
+        'genero' => 'required|string|max:10',
+        'edad' => 'required|integer|min:0',
+        'fecha_nac' => 'required|date',
+        'email' => 'required|string|email|max:255',
+        'telefono' => 'required|string|max:20',
+    ]);
+
+    $paciente = Paciente::create([
+        'nombre' => $request->nombre,
+        'apellido' => $request->apellido,
+        'genero' => $request->genero,
+        'edad' => $request->edad,
+        'fecha_nac' => $request->fecha_nac,
+        'email' => $request->email,
+        'telefono' => $request->telefono,
+    ]);
+
+    return redirect()->route('pacientes.index')->with('success', 'Paciente creado exitosamente.');
+}
+
 }

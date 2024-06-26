@@ -1,32 +1,28 @@
 <?php
-
+// database/migrations/create_pacientes_table.php
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreatePacientesTable extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up()
-{
-    Schema::create('pacientes', function (Blueprint $table) {
-        $table->id();
-        $table->string('nombre');
-        $table->string('telefono');
-        $table->string('estado');
-        $table->date('fecha_cita')->nullable();
-        $table->timestamps();
-    });
-}
+    {
+        Schema::create('pacientes', function (Blueprint $table) {
+            $table->id();
+            $table->string('nombre');
+            $table->string('apellido');
+            $table->string('genero');
+            $table->date('fecha_nac');
+            $table->integer('edad');
+            $table->string('email');
+            $table->string('telefono');
+            $table->timestamps();
+        });
+    }
 
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('pacientes');
     }
-};
+}

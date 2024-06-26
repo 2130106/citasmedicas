@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CitaController;
@@ -32,6 +33,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/citas/store', [CitaController::class, 'store'])->name('citas.store');
     Route::delete('/citas/destroy/{id}', [CitaController::class, 'destroy'])->name('citas.destroy');
 
+    // Rutas para gestionar pacientes
     Route::get('/pacientes', [AuthController::class, 'showPacientes'])->name('pacientes.index');
     Route::post('/pacientes', [AuthController::class, 'storePaciente'])->name('pacientes.store');
+    Route::delete('/pacientes/{id}', [AuthController::class, 'destroyPaciente'])->name('pacientes.destroy');
+
+    
 });
