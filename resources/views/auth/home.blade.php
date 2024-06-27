@@ -82,24 +82,40 @@
         .calendar-container {
             display: flex;
             justify-content: space-between;
+            margin-bottom: 50px;
         }
         #calendar {
-            width: 250px; /* Ancho fijo del calendario */
-            height: 50px;
-            padding: 20px; /* Espaciado interno del calendario */
-            border-radius: 15px; /* Bordes redondeados */
+            width: 450px;
+            height: 600px;
+            padding: 10px;
+            border-radius: 15px;
+            margin-left: 10px;
         }
         #agenda {
-            width: 100%;
-            margin-left: 20px;
+            flex: 1;
+            margin-left: 30px;
         }
+        .add-button {
+            
+            margin-bottom: 20px; /* Espacio entre el botón y el calendario */
+        }
+
+        .btn-custom {
+        background-color: #9370DB; /* Cambia el color de fondo según tu preferencia */
+        color: #ffffff; /* Color del texto */
+        border-color: #5e2056; /* Color del borde */
+    }
+    .btn-custom:hover {
+        background-color: #53189f; /* Color de fondo al pasar el ratón */
+        border-color: #402959; /* Color del borde al pasar el ratón */
+    }
     </style>
 </head>
 <body>
     <div class="sidebar">
         <div class="user-info text-center p-3">
             <img src="{{ asset('img/logoconsultorio.jpeg') }}" alt="User Image">
-            <span>{{ Auth::user()->name }}</span> 
+            <span>{{ Auth::user()->name }}</span>
         </div>
         <a href="{{ route('home') }}">Agenda</a>
         <a href="{{ route('citas.index') }}">Citas</a>
@@ -124,13 +140,67 @@
         <div class="main-content">
             <h1 class="mb-4">Bienvenido, {{ Auth::user()->name }}</h1>
 
-            <!-- Contenedor de calendarios -->
-            <div class="calendar-container">
-                <!-- Calendario de fechas -->
-                <div id="calendar"></div>
+            <div class="add-button">
+                <button class="btn btn-custom" data-toggle="modal" data-target="#addCitaModal">Agregar Cita</button>
+            </div>
 
-                <!-- Calendario de agenda -->
+            <div class="calendar-container">
+                <div id="calendar"></div>
                 <div id="agenda"></div>
+            </div>
+
+            <div class="modal fade" id="addCitaModal" tabindex="-1" role="dialog" aria-labelledby="addCitaModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addCitaModalLabel">Agregar Cita</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form action="{{ route('citas.store') }}" method="POST" id="addCitaForm">
+                            @csrf
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="fecha">Fecha</label>
+                                    <input type="text" id="fecha" name="fecha" class="form-control" placeholder="Selecciona la fecha..." readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label for="hora">Hora</label>
+                                    <input type="time" id="hora" name="hora" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="paciente">Paciente</label>
+                                    <select id="paciente" name="paciente" class="form-control">
+                                         @foreach($pacientes as $paciente)
+                                         <option value="{{ $paciente->id }}">{{ $paciente->nombre }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>  
+                                <div class="form-group">
+                                    <label for="medico">Médico</label>
+                                    <input type="text" id="medico" name="medico" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="consultorio">Consultorio</label>
+                                    <input type="text" id="consultorio" name="consultorio" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="estado">Estado</label>
+                                    <select id="estado" name="estado" class="form-control">
+                                        <option value="pendiente">Pendiente</option>
+                                        <option value="confirmada">Confirmada</option>
+                                        <option value="cancelada">Cancelada</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                <button type="submit" class="btn btn-primary">Guardar Cita</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -139,9 +209,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
     <script>
         $(document).ready(function() {
-          
             function fetchCitas() {
                 return $.ajax({
                     url: "{{ route('citas.index') }}",
@@ -160,14 +231,34 @@
             }
 
             function initializeCalendar(citas) {
+                $('#calendar').fullCalendar({
+                    header: {
+                        left: 'prev,next',
+                        center: 'title',
+                        right: 'month,listMonth'
+                    },
+                    editable: true,
+                    locale: 'es',
+                    events: convertCitasToEvents(citas),
+                    displayEventTime: true,
+                    buttonText: {
+                        month: 'Mes',
+                        listMonth: 'citas'
+                    },
+                    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
+                });
+
+                
+                
                 $('#agenda').fullCalendar({
                     header: {
-                        left: 'prev,next today',
-                        center: 'title',
                         right: 'agendaWeek,agendaDay'
                     },
                     editable: true,
-                    locale: 'es', 
+                    locale: 'es',
                     events: convertCitasToEvents(citas),
                     buttonText: {
                         today: 'Hoy',
@@ -181,13 +272,38 @@
                 });
             }
 
-            // Fetch citas and initialize calendar
             fetchCitas().then(data => {
                 initializeCalendar(data);
             });
 
-            flatpickr('#calendar', {
-                inline: true,
+            flatpickr('#fecha', {
+                enableTime: false,
+                dateFormat: 'Y-m-d',
+            });
+
+            $('#addCitaForm').on('submit', function(event) {
+                event.preventDefault();
+                const formData = $(this).serialize();
+
+                $.ajax({
+                    url: $(this).attr('action'),
+                    method: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        fetchCitas().then(data => {
+                            $('#calendar').fullCalendar('removeEvents');
+                            $('#calendar').fullCalendar('addEventSource', convertCitasToEvents(data));
+                            $('#agenda').fullCalendar('removeEvents');
+                            $('#agenda').fullCalendar('addEventSource', convertCitasToEvents(data));
+                        });
+
+                        $('#addCitaModal').modal('hide');
+                        $('#addCitaForm')[0].reset();
+                    }
+                });
+            });
+
+            flatpickr('#fecha', {
                 enableTime: false,
                 dateFormat: 'Y-m-d',
             });

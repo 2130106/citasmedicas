@@ -67,7 +67,8 @@ class AuthController extends Controller
 
     public function home()
     {
-        return view('auth.home');
+        $pacientes = Paciente::all();
+        return view('auth.home', compact('pacientes'));
     }
 
     public function showPacientes()

@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -22,6 +21,8 @@ return new class extends Migration
             $table->timestamps();
             $table->integer('sexo')->default(2); // 0: Hombre, 1: Mujer, 2: No prefiero especificar
             $table->string('role')->default('secretaria'); // Puede ser 'doctor' o 'secretaria'
+            $table->string('especialidad')->nullable(); // Solo para doctores
+            $table->string('consultorio')->nullable(); // Solo para doctores
         });
 
         Schema::create('sessions', function (Blueprint $table) {
@@ -43,3 +44,4 @@ return new class extends Migration
         Schema::dropIfExists('sessions');
     }
 };
+

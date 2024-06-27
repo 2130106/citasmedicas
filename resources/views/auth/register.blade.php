@@ -18,16 +18,16 @@
             background-color: #d3d3d3;
             padding: 20px;
             border-radius: 10px;
-           
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         .card {
             display: flex;
             flex-direction: row;
             width: 700px;
-            height: 550px;
             border-radius: 10px;
-            background-color: #ffffff; 
+            background-color: #ffffff;
+            max-height: 90vh; 
+            overflow: hidden; 
         }
         .card-body {
             flex: 1;
@@ -36,6 +36,7 @@
             flex-direction: column;
             justify-content: center;
             font-size: 14px;
+            overflow-y: auto; 
         }
         .image {
             flex: 1;
@@ -43,27 +44,25 @@
             background-size: cover;
             border-top-right-radius: 10px;
             border-bottom-right-radius: 10px;
-            border-left: 2px solid #9370DB; 
+            border-left: 2px solid #9370DB;
             box-shadow: 0 4px 8px rgba(147, 112, 219, 0.5);
         }
-        
         .bg-lila {
             background-color: #9370DB;
             border-top-left-radius: 10px;
             border-top-right-radius: 10px;
             padding: 15px;
-            color: white; 
-            font-size: 20px; 
+            color: white;
+            font-size: 20px;
             text-align: center;
         }
         .form-group {
             margin-bottom: 15px;
         }
         .card-header {
-            font-size: 20px; 
+            font-size: 20px;
             text-align: center;
         }
-       
         .btn-link {
             display: block;
             text-align: center;
@@ -85,6 +84,9 @@
         .btn-group .btn {
             flex: 1;
             margin: 0 5px;
+        }
+        .hidden {
+            display: none;
         }
     </style>
 </head>
@@ -135,6 +137,16 @@
                             </select>
                         </div>
                     </div>
+                    <div id="doctorFields" class="hidden">
+                        <div class="form-group">
+                            <label for="especialidad">Especialidad</label>
+                            <input type="text" class="form-control" id="especialidad" name="especialidad">
+                        </div>
+                        <div class="form-group">
+                            <label for="consultorio">Consultorio</label>
+                            <input type="text" class="form-control" id="consultorio" name="consultorio">
+                        </div>
+                    </div>
                     <div class="btn-group">
                         <button type="submit" class="btn btn-primary">Registrar</button>
                         <a href="{{ route('login') }}" class="btn btn-secondary">Iniciar sesión</a>
@@ -144,5 +156,24 @@
             <div class="image"></div>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const roleSelect = document.getElementById('role');
+            const doctorFields = document.getElementById('doctorFields');
+
+            roleSelect.addEventListener('change', function() {
+                if (this.value === 'doctor') {
+                    doctorFields.classList.remove('hidden');
+                } else {
+                    doctorFields.classList.add('hidden');
+                }
+            });
+
+            // For initial load
+            if (roleSelect.value === 'doctor') {
+                doctorFields.classList.remove('hidden');
+            }
+        });
+    </script>
 </body>
 </html>

@@ -4,18 +4,21 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Cita;
+use App\Models\Paciente;
 
 class CitaController extends Controller
 {
-    public function index()
-    {
-        if(request()->ajax()){
+    
+public function index()
+{
+    if (request()->ajax()) {
         $citas = Cita::all();
         return response()->json($citas);
     }
 
+    $pacientes = Paciente::all();
     $citas = Cita::all();
-    return view('auth.citas', compact('citas'));
+    return view('auth.citas', compact('citas','pacientes'));
 }
     
     public function getEvents()
@@ -25,9 +28,11 @@ class CitaController extends Controller
     }
 
     public function create()
-    {
-        return view('citas.create');
-    }
+{
+    $pacientes = Paciente::all(); // Obtener todos los pacientes
+
+    return route('citas.create', compact('pacientes'));
+}
 
     public function store(Request $request)
     {

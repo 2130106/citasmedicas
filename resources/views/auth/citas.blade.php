@@ -139,12 +139,11 @@
         </table>
     </div>
 
-    <!-- Botón para agregar cita -->
+   
     <div class="add-button">
         <button class="btn btn-primary" data-toggle="modal" data-target="#addCitaModal">Agregar Cita</button>
     </div>
 
-    <!-- Modal para agregar cita -->
     <div class="modal fade" id="addCitaModal" tabindex="-1" role="dialog" aria-labelledby="addCitaModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -167,7 +166,11 @@
                         </div>
                         <div class="form-group">
                             <label for="paciente">Paciente</label>
-                            <input type="text" id="paciente" name="paciente" class="form-control">
+                            <select id="paciente" name="paciente" class="form-control">
+                                @foreach($pacientes as $paciente)
+                                    <option value="{{ $paciente->id }}">{{ $paciente->nombre }}</option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="form-group">
                             <label for="medico">Médico</label>
@@ -203,74 +206,80 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
     <script>
-        $(document).ready(function() {
-            // Cargar citas desde el servidor
-            function fetchCitas() {
-                return $.ajax({
-                    url: "{{ route('citas.index') }}",
-                    method: 'GET',
-                    dataType: 'json'
-                });
-            }
-
-            // Convertir citas a eventos para el calendario
-            function convertCitasToEvents(citas) {
-                return citas.map(cita => ({
-                    title: cita.paciente,
-                    start: cita.fecha + 'T' + cita.hora,
-                    description: cita.medico + ' - ' + cita.consultorio,
-                    status: cita.estado
-                }));
-            }
-
-            // Inicializar el calendario
-            function initializeCalendar(citas) {
-                $('#calendar').fullCalendar({
-                    header: {
-                        left: 'prev,next today',
-                        center: 'title',
-                        right: 'month,agendaWeek,agendaDay'
-                    },
-                    editable: true,
-                    events: convertCitasToEvents(citas)
-                });
-            }
-
-            // Fetch citas and initialize calendar
-            fetchCitas().then(data => {
-                initializeCalendar(data);
+    $(document).ready(function() {
+        // Función para cargar citas desde el servidor
+        function fetchCitas() {
+            return $.ajax({
+                url: "{{ route('citas.index') }}",
+                method: 'GET',
+                dataType: 'json'
             });
+        }
 
-            // Sincronizar el formulario de agregar cita con el calendario
-            $('#addCitaForm').on('submit', function(event) {
-                event.preventDefault();
-                const formData = $(this).serialize();
+        // Función para convertir citas a eventos del calendario (si lo usas)
+        function convertCitasToEvents(citas) {
+            return citas.map(cita => ({
+                title: cita.paciente,
+                start: cita.fecha + 'T' + cita.hora,
+                description: cita.medico + ' - ' + cita.consultorio,
+                status: cita.estado
+            }));
+        }
 
-                $.ajax({
-                    url: $(this).attr('action'),
-                    method: 'POST',
-                    data: formData,
-                    success: function(response) {
-                        // Actualizar el calendario con la nueva cita
-                        fetchCitas().then(data => {
-                            $('#calendar').fullCalendar('removeEvents');
-                            $('#calendar').fullCalendar('addEventSource', convertCitasToEvents(data));
-                        });
-
-                        // Cerrar el modal
-                        $('#addCitaModal').modal('hide');
-
-                        // Limpiar el formulario
-                        $('#addCitaForm')[0].reset();
-                    }
-                });
+        // Función para inicializar el calendario (si lo usas)
+        function initializeCalendar(citas) {
+            $('#calendar').fullCalendar({
+                // Configuración del calendario
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'month,agendaWeek,agendaDay'
+                },
+                editable: true,
+                events: convertCitasToEvents(citas) // Eventos del calendario
             });
+        }
 
-            flatpickr('#fecha', {
-                enableTime: false,
-                dateFormat: 'Y-m-d',
+        // Manejar el envío del formulario de agregar cita
+        $('#addCitaForm').on('submit', function(event) {
+            event.preventDefault();
+            const formData = $(this).serialize();
+
+            $.ajax({
+                url: $(this).attr('action'),
+                method: 'POST',
+                data: formData,
+                success: function(response) {
+                    // Recargar la lista de citas
+                    fetchCitas().then(data => {
+                        $('#calendar').fullCalendar('removeEvents');
+                        $('#calendar').fullCalendar('addEventSource', convertCitasToEvents(data));
+                    });
+
+                    // Cerrar el modal de agregar cita
+                    $('#addCitaModal').modal('hide');
+
+                    // Limpiar el formulario después de guardar
+                    $('#addCitaForm')[0].reset();
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
             });
         });
-    </script>
+
+        // Inicializar Flatpickr u otro calendario para seleccionar fechas
+        flatpickr('#fecha', {
+            enableTime: false,
+            dateFormat: 'Y-m-d',
+        });
+
+        // Llamar a fetchCitas inicialmente para cargar las citas
+        fetchCitas().then(data => {
+            initializeCalendar(data); // Si usas calendario
+        });
+    });
+</script>
+
 </body>
 </html>
