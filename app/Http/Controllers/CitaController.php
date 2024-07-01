@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Cita;
+use App\Models\Medico;
 use App\Models\Paciente;
+use Illuminate\Support\Facades\Log;
 
 class CitaController extends Controller
 {
@@ -18,7 +20,8 @@ public function index()
 
     $pacientes = Paciente::all();
     $citas = Cita::all();
-    return view('auth.citas', compact('citas','pacientes'));
+    $medicos = Medico::all();
+    return view('auth.citas', compact('citas','pacientes', 'medicos'));
 }
     
     public function getEvents()
@@ -36,6 +39,7 @@ public function index()
 
     public function store(Request $request)
     {
+        Log::debug($request);
         $request->validate([
             'fecha' => 'required|date',
             'hora' => 'required',

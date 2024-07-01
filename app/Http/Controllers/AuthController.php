@@ -1,12 +1,12 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
-use App\Models\Paciente; // Importar el modelo Paciente
+use App\Models\Paciente; 
+use App\Models\Medico; // Importar el modelo Medico
 
 class AuthController extends Controller
 {
@@ -25,12 +25,21 @@ class AuthController extends Controller
 
         return redirect('login')->withErrors('Login details are not valid');
     }
+
     public function destroyPaciente($id)
     {
         $paciente = Paciente::findOrFail($id);
         $paciente->delete();
 
         return redirect()->route('pacientes.index')->with('success', 'Paciente eliminado exitosamente.');
+    }
+
+    public function destroyMedico($id)
+    {
+        $medico = Medico::findOrFail($id);
+        $medico->delete();
+
+        return redirect()->route('medicos.index')->with('success', 'Médico eliminado exitosamente.');
     }
 
     public function showRegisterForm()
@@ -60,48 +69,71 @@ class AuthController extends Controller
             'role' => $request->role,
         ]);
 
-     
-
         return redirect()->intended('home');
     }
 
     public function home()
     {
         $pacientes = Paciente::all();
-        return view('auth.home', compact('pacientes'));
+        $medicos = Medico::all();
+        return view('auth.home', compact('pacientes','medicos'));
     }
 
     public function showPacientes()
     {
-        // Obtener todos los pacientes de la base de datos
         $pacientes = Paciente::all();
         return view('auth.pacientes', compact('pacientes'));
     }
 
+    public function showMedicos()
+    {
+        $medicos = Medico::all();
+        return view('auth.medico', compact('medicos'));
+    }
+
     public function storePaciente(Request $request)
     {
-    // Validar y guardar los datos del nuevo paciente
-    $request->validate([
-        'nombre' => 'required|string|max:255',
-        'apellido' => 'required|string|max:255',
-        'genero' => 'required|string|max:10',
-        'edad' => 'required|integer|min:0',
-        'fecha_nac' => 'required|date',
-        'email' => 'required|string|email|max:255',
-        'telefono' => 'required|string|max:20',
-    ]);
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'apellido' => 'required|string|max:255',
+            'genero' => 'required|string|max:10',
+            'edad' => 'required|integer|min:0',
+            'fecha_nac' => 'required|date',
+            'email' => 'required|string|email|max:255',
+            'telefono' => 'required|string|max:20',
+        ]);
 
-    $paciente = Paciente::create([
-        'nombre' => $request->nombre,
-        'apellido' => $request->apellido,
-        'genero' => $request->genero,
-        'edad' => $request->edad,
-        'fecha_nac' => $request->fecha_nac,
-        'email' => $request->email,
-        'telefono' => $request->telefono,
-    ]);
+        $paciente = Paciente::create([
+            'nombre' => $request->nombre,
+            'apellido' => $request->apellido,
+            'genero' => $request->genero,
+            'edad' => $request->edad,
+            'fecha_nac' => $request->fecha_nac,
+            'email' => $request->email,
+            'telefono' => $request->telefono,
+        ]);
 
-    return redirect()->route('pacientes.index')->with('success', 'Paciente creado exitosamente.');
-}
+        return redirect()->route('pacientes.index')->with('success', 'Paciente creado exitosamente.');
+    }
 
+    public function storeMedico(Request $request)
+    {
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'apellido' => 'required|string|max:255',
+            'especialidad' => 'required|string|max:255',
+            'consultorio' => 'required|string|max:255',
+            'edad' => 'required|integer|min:0',
+        ]);
+
+        $medico = Medico::create([
+            'nombre' => $request->nombre,
+            'apellido' => $request->apellido,
+            'especialidad' => $request->especialidad,
+            'consultorio' => $request->consultorio,
+            'edad' => $request->edad,
+        ]);
+
+        return redirect()->route('medicos.index')->with('success', 'Médico creado exitosamente.');
+    }
 }

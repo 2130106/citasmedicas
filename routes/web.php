@@ -27,16 +27,23 @@ Route::middleware('auth')->group(function () {
         return redirect('/login');
     })->name('logout');
 
-    // Rutas para gestionar citas
     Route::get('/citas', [CitaController::class, 'index'])->name('citas.index');
     Route::get('/citas/create', [CitaController::class, 'create'])->name('citas.create');
     Route::post('/citas/store', [CitaController::class, 'store'])->name('citas.store');
     Route::delete('/citas/destroy/{id}', [CitaController::class, 'destroy'])->name('citas.destroy');
 
-    // Rutas para gestionar pacientes
     Route::get('/pacientes', [AuthController::class, 'showPacientes'])->name('pacientes.index');
     Route::post('/pacientes', [AuthController::class, 'storePaciente'])->name('pacientes.store');
     Route::delete('/pacientes/{id}', [AuthController::class, 'destroyPaciente'])->name('pacientes.destroy');
 
-    
+    Route::get('doctors', [AuthController::class, 'showDoctors'])->name('doctors.index');
+    Route::get('doctors/create', [AuthController::class, 'createDoctor'])->name('doctors.create');
+    Route::post('doctors', [AuthController::class, 'storeDoctor'])->name('doctors.store');
+    Route::get('medicos', [AuthController::class, 'showMedicos'])->name('medicos.index');
+    Route::post('medicos', [AuthController::class, 'storeMedico'])->name('medicos.store');
+    Route::delete('medicos/{id}', [AuthController::class, 'destroyMedico'])->name('medicos.destroy');
+
+
 });
+
+

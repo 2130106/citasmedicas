@@ -71,7 +71,6 @@
         .form-control {
             margin-bottom: 10px;
         }
-       
     </style>
     <style>
         body {
@@ -95,7 +94,7 @@
             <img src="{{ asset('img/logoconsultorio.jpeg') }}" alt="User Image">
             <span>{{ Auth::user()->name }}</span>
         </div>
-        <a href="{{ route('home') }}">Home</a>
+        <a href="{{ route('home') }}">Agenda</a>
         <a href="{{ route('citas.index') }}">Citas</a>
         <a href="{{ route('pacientes.index') }}">Pacientes</a>
         <a href="#">Médicos</a>
@@ -139,7 +138,6 @@
         </table>
     </div>
 
-   
     <div class="add-button">
         <button class="btn btn-primary" data-toggle="modal" data-target="#addCitaModal">Agregar Cita</button>
     </div>
@@ -168,17 +166,22 @@
                             <label for="paciente">Paciente</label>
                             <select id="paciente" name="paciente" class="form-control">
                                 @foreach($pacientes as $paciente)
-                                    <option value="{{ $paciente->id }}">{{ $paciente->nombre }}</option>
+                                    <option value="{{ $paciente->nombre }}">{{ $paciente->nombre }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="medico">Médico</label>
-                            <input type="text" id="medico" name="medico" class="form-control">
+                            <select id="medico" name="medico" class="form-control" required>
+                                <option value="">Seleccione un médico</option>
+                                @foreach ($medicos as $medico)
+                                    <option value="{{ $medico->id }}" data-consultorio="{{ $medico->consultorio }}">{{ $medico->nombre }} {{ $medico->apellido }}</option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="form-group">
                             <label for="consultorio">Consultorio</label>
-                            <input type="text" id="consultorio" name="consultorio" class="form-control">
+                            <input type="text" id="consultorio" name="consultorio" class="form-control" readonly>
                         </div>
                         <div class="form-group">
                             <label for="estado">Estado</label>
@@ -197,8 +200,6 @@
             </div>
         </div>
     </div>
-
-
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -278,8 +279,13 @@
         fetchCitas().then(data => {
             initializeCalendar(data); // Si usas calendario
         });
-    });
-</script>
 
+        // Autocompletar el campo "consultorio" basado en el médico seleccionado
+        $('#medico').on('change', function() {
+            var consultorio = $(this).find('option:selected').data('consultorio');
+            $('#consultorio').val(consultorio);
+        });
+    });
+    </script>
 </body>
 </html>

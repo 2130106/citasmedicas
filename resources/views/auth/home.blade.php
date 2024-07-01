@@ -97,17 +97,17 @@
         }
         .add-button {
             
-            margin-bottom: 20px; /* Espacio entre el botón y el calendario */
+            margin-bottom: 20px; 
         }
 
         .btn-custom {
-        background-color: #9370DB; /* Cambia el color de fondo según tu preferencia */
-        color: #ffffff; /* Color del texto */
-        border-color: #5e2056; /* Color del borde */
+        background-color: #9370DB; 
+        color: #ffffff; 
+        border-color: #5e2056; 
     }
     .btn-custom:hover {
-        background-color: #53189f; /* Color de fondo al pasar el ratón */
-        border-color: #402959; /* Color del borde al pasar el ratón */
+        background-color: #53189f; 
+        border-color: #402959; 
     }
     </style>
 </head>
@@ -120,8 +120,8 @@
         <a href="{{ route('home') }}">Agenda</a>
         <a href="{{ route('citas.index') }}">Citas</a>
         <a href="{{ route('pacientes.index') }}">Pacientes</a>
-        <a href="#">Médicos</a>
-        <a href="#">Usuarios</a>
+        <a href="{{ route('medicos.index') }}">Médicos</a>
+        <a href="{{ route('pacientes.index') }}">Pacientes</a>
     </div>
 
     <div class="content">
@@ -148,61 +148,65 @@
                 <div id="calendar"></div>
                 <div id="agenda"></div>
             </div>
-
             <div class="modal fade" id="addCitaModal" tabindex="-1" role="dialog" aria-labelledby="addCitaModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="addCitaModalLabel">Agregar Cita</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <form action="{{ route('citas.store') }}" method="POST" id="addCitaForm">
-                            @csrf
-                            <div class="modal-body">
-                                <div class="form-group">
-                                    <label for="fecha">Fecha</label>
-                                    <input type="text" id="fecha" name="fecha" class="form-control" placeholder="Selecciona la fecha..." readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label for="hora">Hora</label>
-                                    <input type="time" id="hora" name="hora" class="form-control">
-                                </div>
-                                <div class="form-group">
-                                    <label for="paciente">Paciente</label>
-                                    <select id="paciente" name="paciente" class="form-control">
-                                         @foreach($pacientes as $paciente)
-                                         <option value="{{ $paciente->id }}">{{ $paciente->nombre }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>  
-                                <div class="form-group">
-                                    <label for="medico">Médico</label>
-                                    <input type="text" id="medico" name="medico" class="form-control">
-                                </div>
-                                <div class="form-group">
-                                    <label for="consultorio">Consultorio</label>
-                                    <input type="text" id="consultorio" name="consultorio" class="form-control">
-                                </div>
-                                <div class="form-group">
-                                    <label for="estado">Estado</label>
-                                    <select id="estado" name="estado" class="form-control">
-                                        <option value="pendiente">Pendiente</option>
-                                        <option value="confirmada">Confirmada</option>
-                                        <option value="cancelada">Cancelada</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                <button type="submit" class="btn btn-primary">Guardar Cita</button>
-                            </div>
-                        </form>
-                    </div>
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addCitaModalLabel">Agregar Cita</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
+                <form action="{{ route('citas.store') }}" method="POST" id="addCitaForm">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="fecha">Fecha</label>
+                            <input type="text" id="fecha" name="fecha" class="form-control" placeholder="Selecciona la fecha..." readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="hora">Hora</label>
+                            <input type="time" id="hora" name="hora" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="paciente">Paciente</label>
+                            <select id="paciente" name="paciente" class="form-control">
+                                @foreach($pacientes as $paciente)
+                                    <option value="{{ $paciente->nombre }}">{{ $paciente->nombre }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="medico">Médico</label>
+                            <select id="medico" name="medico" class="form-control" required>
+                                <option value="">Seleccione un médico</option>
+                                @foreach ($medicos as $medico)
+                                    <option value="{{ $medico->id }}" data-consultorio="{{ $medico->consultorio }}">{{ $medico->nombre }} {{ $medico->apellido }}</option>
+                                @endforeach
+                            </select>
+
+                        </div>
+                        <div class="form-group">
+                            <label for="consultorio">Consultorio</label>
+                            <input type="text" id="consultorio" name="consultorio" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="estado">Estado</label>
+                            <select id="estado" name="estado" class="form-control">
+                                <option value="pendiente">Pendiente</option>
+                                <option value="confirmada">Confirmada</option>
+                                <option value="cancelada">Cancelada</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary">Guardar Cita</button>
+                    </div>
+                </form>
             </div>
         </div>
+    </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -275,7 +279,6 @@
             fetchCitas().then(data => {
                 initializeCalendar(data);
             });
-
             flatpickr('#fecha', {
                 enableTime: false,
                 dateFormat: 'Y-m-d',
@@ -302,11 +305,15 @@
                     }
                 });
             });
-
             flatpickr('#fecha', {
                 enableTime: false,
                 dateFormat: 'Y-m-d',
             });
+            $('#medico').on('change', function() {
+                    var selectedMedico = $(this).find('option:selected');
+                    var consultorio = selectedMedico.data('consultorio');
+                    $('#consultorio').val(consultorio);
+                });
         });
     </script>
 </body>
