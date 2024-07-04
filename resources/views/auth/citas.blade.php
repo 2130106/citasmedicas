@@ -97,8 +97,10 @@
         <a href="{{ route('home') }}">Agenda</a>
         <a href="{{ route('citas.index') }}">Citas</a>
         <a href="{{ route('pacientes.index') }}">Pacientes</a>
-        <a href="#">Médicos</a>
-        <a href="#">Usuarios</a>
+        @if (Auth::user()->role=='admin')
+            <a href="{{ route('medicos.index') }}">Médicos</a> 
+        @endif
+        
     </div>
     <div class="table-container">
         <h2>Citas</h2>

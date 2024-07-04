@@ -27,7 +27,7 @@
             border-radius: 10px;
             background-color: #ffffff;
             max-height: 90vh; 
-            overflow: hidden; 
+            overflow: auto; 
         }
         .card-body {
             flex: 1;
@@ -36,7 +36,7 @@
             flex-direction: column;
             justify-content: center;
             font-size: 14px;
-            overflow-y: auto; 
+            overflow-y: scroll; 
         }
         .image {
             flex: 1;
@@ -168,8 +168,6 @@
                     doctorFields.classList.add('hidden');
                 }
             });
-
-            // For initial load
             if (roleSelect.value === 'doctor') {
                 doctorFields.classList.remove('hidden');
             }

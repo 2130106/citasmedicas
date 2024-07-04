@@ -113,15 +113,20 @@
 </head>
 <body>
     <div class="sidebar">
-        <div class="user-info text-center p-3">
-            <img src="{{ asset('img/logoconsultorio.jpeg') }}" alt="User Image">
-            <span>{{ Auth::user()->name }}</span>
-        </div>
+    <div class="user-info text-center p-3">
+        <img src="{{ asset('img/logoconsultorio.jpeg') }}" alt="User Image">
+        <button class="btn btn-link" id="user-info-btn">{{ Auth::user()->name }}</button>
+    </div>
         <a href="{{ route('home') }}">Agenda</a>
         <a href="{{ route('citas.index') }}">Citas</a>
         <a href="{{ route('pacientes.index') }}">Pacientes</a>
-        <a href="{{ route('medicos.index') }}">Médicos</a>
-        <a href="{{ route('pacientes.index') }}">Pacientes</a>
+        @if (Auth::user()->role=='admin')
+            <a href="{{ route('medicos.index') }}">Médicos</a> 
+        @endif
+        @if (Auth::user()->role=='doctor')
+            <a href="{{ route('consultas.index') }}">Registro de consultas. </a> 
+        @endif
+       
     </div>
 
     <div class="content">
@@ -216,6 +221,9 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
+        document.getElementById('user-info-btn').addEventListener('click', function() {
+            window.location.href = "{{ route('user.edit') }}";
+        });
         $(document).ready(function() {
             function fetchCitas() {
                 return $.ajax({

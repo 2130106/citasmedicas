@@ -136,4 +136,7 @@ class AuthController extends Controller
 
         return redirect()->route('medicos.index')->with('success', 'Médico creado exitosamente.');
     }
+
+
+    
 }
