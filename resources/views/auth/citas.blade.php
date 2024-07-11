@@ -115,6 +115,7 @@
                     <th>Consultorio</th>
                     <th>Estado</th>
                     <th>Acciones</th>
+                    <th>Cita</th>
                 </tr>
             </thead>
             <tbody>
@@ -126,15 +127,89 @@
                     <td>{{ $cita->paciente }}</td>
                     <td>{{ $cita->medico }}</td>
                     <td>{{ $cita->consultorio }}</td>
-                    <td>{{ ucfirst($cita->estado) }}</td>
+                    <td>
+                        <form action="{{ route('citas.changeStatus', $cita->id) }}" method="POST">
+                            @csrf
+                            @method('PATCH')
+                            <select name="estado" class="form-control" onchange="this.form.submit()">
+                                <option value="1" {{ $cita->estado == 1 ? 'selected' : '' }}>Confirmada</option>
+                                <option value="2" {{ $cita->estado == 2 ? 'selected' : '' }}>Pendiente</option>
+                                <option value="3" {{ $cita->estado == 3 ? 'selected' : '' }}>Cancelada</option>
+                            </select>
+                        </form>
+                    </td>
                     <td>
                         <form action="{{ route('citas.destroy', $cita->id) }}" method="POST">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
                         </form>
+                        <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#editCitaModal{{ $cita->id }}">Modificar</button>
+
+                    </td>
+                    <td>
+                        <a href="{{ route('consultas.index') }}" class="btn btn-primary btn-sm">Ver Consulta</a>
                     </td>
                 </tr>
+                <div class="modal fade" id="editCitaModal{{ $cita->id }}" tabindex="-1" role="dialog" aria-labelledby="editCitaModalLabel{{ $cita->id }}" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editCitaModalLabel{{ $cita->id }}">Modificar Cita</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <form action="{{ route('citas.update', $cita->id) }}" method="POST">
+                                @csrf
+                                @method('PUT')
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label for="fecha">Fecha</label>
+                                        <input type="text" id="fecha" name="fecha" class="form-control" value="{{ $cita->fecha }}" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="hora">Hora</label>
+                                        <input type="time" id="hora" name="hora" class="form-control" value="{{ $cita->hora }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="paciente">Paciente</label>
+                                        <select id="paciente" name="paciente" class="form-control">
+                                            @foreach($pacientes as $paciente)
+                                                <option value="{{ $paciente->nombre }}" {{ $cita->paciente == $paciente->nombre ? 'selected' : '' }}>{{ $paciente->nombre }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="medico">Médico</label>
+                                        <select id="medico" name="medico" class="form-control">
+                                            @foreach($medicos as $medico)
+                                                <option value="{{ $medico->id }}" data-consultorio="{{ $medico->consultorio }}" {{ $cita->medico == $medico->nombre ? 'selected' : '' }}>{{ $medico->nombre }} {{ $medico->apellido }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="consultorio">Consultorio</label>
+                                        <input type="text" id="consultorio" name="consultorio" class="form-control" value="{{ $cita->consultorio }}" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="estado">Estado</label>
+                                        <select id="estado" name="estado" class="form-control">
+                                            <option value="1" {{ $cita->estado == 1 ? 'selected' : '' }}>Pendiente</option>
+                                            <option value="2" {{ $cita->estado == 2 ? 'selected' : '' }}>Cancelada</option>
+                                            <option value="3" {{ $cita->estado == 3 ? 'selected' : '' }}>Activa</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
                 @endforeach
             </tbody>
         </table>
@@ -188,9 +263,9 @@
                         <div class="form-group">
                             <label for="estado">Estado</label>
                             <select id="estado" name="estado" class="form-control">
-                                <option value="pendiente">Pendiente</option>
-                                <option value="confirmada">Confirmada</option>
-                                <option value="cancelada">Cancelada</option>
+                                <option value="2">Pendiente</option>
+                                <option value="1">Confirmada</option>
+                                <option value="3">Cancelada</option>
                             </select>
                         </div>
                     </div>

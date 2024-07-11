@@ -1,52 +1,35 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Cita;
 use App\Models\Medico;
 use App\Models\Paciente;
-use Illuminate\Support\Facades\Log;
 
 class CitaController extends Controller
 {
-    
-public function index()
-{
-    if (request()->ajax()) {
-        $citas = Cita::all();
-        return response()->json($citas);
-    }
-
-    $pacientes = Paciente::all();
-    $citas = Cita::all();
-    $medicos = Medico::all();
-    return view('auth.citas', compact('citas','pacientes', 'medicos'));
-}
-    
-    public function getEvents()
+    public function index()
     {
+        if (request()->ajax()) {
+            $citas = Cita::all();
+            return response()->json($citas);
+        }
+
+        $pacientes = Paciente::all();
         $citas = Cita::all();
-        return response()->json($citas);
+        $medicos = Medico::all();
+        return view('auth.citas', compact('citas', 'pacientes', 'medicos'));
     }
-
-    public function create()
-{
-    $pacientes = Paciente::all(); // Obtener todos los pacientes
-
-    return route('citas.create', compact('pacientes'));
-}
 
     public function store(Request $request)
     {
-        Log::debug($request);
         $request->validate([
             'fecha' => 'required|date',
             'hora' => 'required',
             'paciente' => 'required|string|max:255',
             'medico' => 'required|string|max:255',
             'consultorio' => 'required|string|max:255',
-            'estado' => 'required|in:pendiente,confirmada,cancelada',
+            'estado' => 'required|integer|in:1,2,3',
         ]);
 
         $cita = Cita::create($request->all());
@@ -58,16 +41,11 @@ public function index()
         return redirect()->route('citas.index')->with('success', 'Cita creada exitosamente.');
     }
 
-    public function show($id)
+    public function create()
     {
-        $cita = Cita::findOrFail($id);
-        return view('citas.show', compact('cita'));
-    }
-
-    public function edit($id)
-    {
-        $cita = Cita::findOrFail($id);
-        return view('citas.edit', compact('cita'));
+        $pacientes = Paciente::all();
+        $medicos = Medico::all();
+        return view('auth.crear_cita', compact('pacientes', 'medicos'));
     }
 
     public function update(Request $request, $id)
@@ -78,7 +56,7 @@ public function index()
             'paciente' => 'required|string|max:255',
             'medico' => 'required|string|max:255',
             'consultorio' => 'required|string|max:255',
-            'estado' => 'required|in:pendiente,confirmada,cancelada',
+            'estado' => 'required|integer|in:1,2,3',
         ]);
 
         $cita = Cita::findOrFail($id);
@@ -94,5 +72,13 @@ public function index()
 
         return redirect()->route('citas.index')->with('success', 'Cita eliminada exitosamente.');
     }
-}
 
+    public function changeStatus(Request $request, $id)
+    {
+        $cita = Cita::find($id);
+        $cita->estado = $request->input('estado');
+        $cita->save();
+
+        return redirect()->route('citas.index')->with('success', 'Estado de la cita actualizado.');
+    }
+}

@@ -14,7 +14,7 @@ class CreateCitasTable extends Migration
             $table->string('paciente');
             $table->string('medico');
             $table->string('consultorio');
-            $table->enum('estado', ['pendiente', 'confirmada', 'cancelada'])->default('pendiente');
+            $table->integer('estado')->default(2); // 2 = pendiente
             $table->timestamps();
         });
     }
@@ -24,3 +24,4 @@ class CreateCitasTable extends Migration
         Schema::dropIfExists('citas');
     }
 }
+

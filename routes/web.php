@@ -29,10 +29,21 @@ Route::middleware('auth')->group(function () {
         return redirect('/login');
     })->name('logout');
 
+    Route::resource('citas', CitaController::class)->except([
+        'show', 'edit', 'update'
+    ]);
+
     Route::get('/citas', [CitaController::class, 'index'])->name('citas.index');
     Route::get('/citas/create', [CitaController::class, 'create'])->name('citas.create');
     Route::post('/citas/store', [CitaController::class, 'store'])->name('citas.store');
     Route::delete('/citas/destroy/{id}', [CitaController::class, 'destroy'])->name('citas.destroy');
+    Route::put('/citas/{cita}/update', [CitaController::class, 'update'])->name('citas.update');
+
+    Route::patch('citas/{id}/changeStatus', [CitaController::class, 'changeStatus'])->name('citas.changeStatus');
+
+    Route::resource('citas', CitaController::class);
+    Route::get('registro_consulta', [ConsultasController::class, 'create'])->name('registro_consulta');
+
 
     Route::get('/pacientes', [AuthController::class, 'showPacientes'])->name('pacientes.index');
     Route::post('/pacientes', [AuthController::class, 'storePaciente'])->name('pacientes.store');

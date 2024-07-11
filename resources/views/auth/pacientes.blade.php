@@ -45,7 +45,6 @@
         }
         .content {
             flex: 1;
-            padding: 20px;
         }
         .user-info {
             background-color: #9370DB;
@@ -104,6 +103,9 @@
         <a href="{{ route('pacientes.index') }}">Pacientes</a>
         @if (Auth::user()->role=='admin')
             <a href="{{ route('medicos.index') }}">Médicos</a> 
+        @endif
+        @if (Auth::user()->role=='doctor')
+            <a href="{{ route('consultas.index') }}">Registro de consultas. </a> 
         @endif
 
     </div>
