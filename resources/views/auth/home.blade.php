@@ -80,15 +80,30 @@
         .calendar-container {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 50px;
+            margin-bottom: 10px;
         }
         #calendar {
-            width: 450px;
-            height: 600px;
-            padding: 10px;
-            border-radius: 15px;
-            margin-left: 10px;
+        width: 300px;
+        height: 283px;
+        padding: 10px;
         }
+        #calendar .fc-today-button{
+            display: none;
+        }
+
+        .fc-daygrid-day-frame {
+            height: 33px !important; /* Ajustar la altura para hacer los contenedores más pequeños */
+            padding: 1px; /* Reducir el padding */
+        }
+      
+        .fc-daygrid-day-number {
+            font-size: 12px; /* Tamaño del número */
+            color: #bd31d2; /* Color del número */
+        }
+        .fc-col-header-cell-cushion {
+            color: #8b209b; /* Color del número */
+        }
+
         #agenda {
             flex: 1;
             margin-left: 30px;
@@ -282,7 +297,6 @@
                     },
                     editable: true,
                     locale: 'es',
-                    events: convertCitasToEvents(citas),
                     displayEventTime: true,
                     buttonText: {
                         month: 'Mes',
