@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Paciente; 
 use App\Models\Medico; // Importar el modelo Medico
+use App\Models\Cita;
 
 class AuthController extends Controller
 {
@@ -76,7 +77,8 @@ class AuthController extends Controller
     {
         $pacientes = Paciente::all();
         $medicos = Medico::all();
-        return view('auth.home', compact('pacientes','medicos'));
+        $citas = Cita::all();
+        return view('auth.home', compact('pacientes','medicos','citas'));
     }
 
     public function showPacientes()

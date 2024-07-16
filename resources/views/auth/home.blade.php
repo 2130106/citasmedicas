@@ -91,23 +91,39 @@
             display: none;
         }
 
+        #lista .fc-toolbar-chunk:first-child,#lista .fc-toolbar-chunk:nth-child(3){
+            display: none;
+        }
+
         .fc-daygrid-day-frame {
-            height: 33px !important; /* Ajustar la altura para hacer los contenedores más pequeños */
-            padding: 1px; /* Reducir el padding */
+            height: 33px !important; 
+            padding: 1px; 
         }
       
         .fc-daygrid-day-number {
-            font-size: 12px; /* Tamaño del número */
-            color: #bd31d2; /* Color del número */
+            font-size: 12px;
+            color: #bd31d2;
         }
         .fc-col-header-cell-cushion {
-            color: #8b209b; /* Color del número */
+            color: #8b209b;
         }
 
         #agenda {
             flex: 1;
             margin-left: 30px;
+            width: 300px;
+            height: 600px;
+            padding: 5px;
         }
+
+    .fc-time-grid .fc-slats td,
+    .fc-time-grid .fc-axis {
+        height: 30px !important; 
+    }
+
+    .fc-time-grid .fc-content-col {
+        min-height: 30px; 
+    }
         .add-button {
             margin-bottom: 20px;
         }
@@ -159,92 +175,94 @@
             <h1 class="mb-4">Bienvenido, {{ Auth::user()->name }}</h1>
 
             <div class="add-button">
-                <button class="btn btn-custom" data-toggle="modal" data-target="#addCitaModal">Agregar Cita</button>
+            <button class="btn btn-primary" data-toggle="modal" data-target="#addCitaModal">Agregar Cita</button>
             </div>
 
             <div class="calendar-container">
+                <div>
                 <div id="calendar"></div>
+                <div id="lista"></div>
+                </div>
                 <div id="agenda"></div>
+                
+
             </div>
-            
-            <!-- Modal para mostrar detalles de cita -->
-            <div class="modal fade" id="citaDetailsModal" tabindex="-1" role="dialog" aria-labelledby="citaDetailsModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="citaDetailsModalLabel">Detalles de Cita</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body" id="citaDetailsBody">
-                            <!-- Aquí se mostrarán los detalles de la cita seleccionada -->
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        </div>
+            <!-- Modal para mostrar detalles de la cita -->
+        <div class="modal fade" id="citaDetailsModal" tabindex="-1" role="dialog" aria-labelledby="citaDetailsModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="citaDetailsModalLabel">Detalles de la Cita</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="citaDetailsBody">
+                        <!-- Aquí se llenarán dinámicamente los detalles de la cita -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                     </div>
                 </div>
             </div>
+        </div>
 
             <!-- Modal para agregar cita -->
             <div class="modal fade" id="addCitaModal" tabindex="-1" role="dialog" aria-labelledby="addCitaModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="addCitaModalLabel">Agregar Cita</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <form action="{{ route('citas.store') }}" method="POST" id="addCitaForm">
-                            @csrf
-                            <div class="modal-body">
-                                <div class="form-group">
-                                    <label for="fecha">Fecha</label>
-                                    <input type="text" id="fecha" name="fecha" class="form-control" placeholder="Selecciona la fecha..." readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label for="hora">Hora</label>
-                                    <input type="time" id="hora" name="hora" class="form-control">
-                                </div>
-                                <div class="form-group">
-                                    <label for="paciente">Paciente</label>
-                                    <select id="paciente" name="paciente" class="form-control">
-                                        @foreach($pacientes as $paciente)
-                                            <option value="{{ $paciente->nombre }}">{{ $paciente->nombre }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="medico">Médico</label>
-                                    <select id="medico" name="medico" class="form-control" required>
-                                        <option value="">Seleccione un médico</option>
-                                        @foreach ($medicos as $medico)
-                                            <option value="{{ $medico->id }}" data-consultorio="{{ $medico->consultorio }}">{{ $medico->nombre }} {{ $medico->apellido }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="consultorio">Consultorio</label>
-                                    <input type="text" id="consultorio" name="consultorio" class="form-control" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label for="estado">Estado</label>
-                                    <select id="estado" name="estado" class="form-control">
-                                        <option value="pendiente">Pendiente</option>
-                                        <option value="confirmada">Confirmada</option>
-                                        <option value="cancelada">Cancelada</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                <button type="submit" class="btn btn-primary">Guardar Cita</button>
-                            </div>
-                        </form>
-                    </div>
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addCitaModalLabel">Agregar Cita</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
+                <form action="{{ route('citas.store') }}" method="POST" id="addCitaForm">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="fecha">Fecha</label>
+                            <input type="text" id="fecha" name="fecha" class="form-control" placeholder="Selecciona la fecha..." readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="hora">Hora</label>
+                            <input type="time" id="hora" name="hora" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="paciente">Paciente</label>
+                            <select id="paciente" name="paciente" class="form-control">
+                                @foreach($pacientes as $paciente)
+                                    <option value="{{ $paciente->nombre }}">{{ $paciente->nombre }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="medico">Médico</label>
+                            <select id="medico" name="medico" class="form-control" required>
+                                <option value="">Seleccione un médico</option>
+                                @foreach ($medicos as $medico)
+                                    <option value="{{ $medico->id }}" data-consultorio="{{ $medico->consultorio }}">{{ $medico->nombre }} {{ $medico->apellido }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="consultorio">Consultorio</label>
+                            <input type="text" id="consultorio" name="consultorio" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="estado">Estado</label>
+                            <select id="estado" name="estado" class="form-control">
+                                <option value="2">Pendiente</option>
+                                <option value="1">Confirmada</option>
+                                <option value="3">Cancelada</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary">Guardar Cita</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -280,13 +298,13 @@
                 return citas.map(cita => ({
                     title: cita.paciente + ' Estado: ' + estadoMap[cita.estado],
                     start: cita.fecha + 'T' + cita.hora,
-                    description: cita.medico + ' - ' + estadoMap[cita.estado],
-                    status: estadoMap[cita.estado]
+                    description: estadoMap[cita.estado],
+                    status: estadoMap[cita.estado],
+                   
                 }));
             }
 
             function initializeCalendar(citas) {
-                // Configuración para el calendario mensual
                 var calE=document.querySelector('#calendar')
                 var cal= new FullCalendar.Calendar(calE,{
                     initialView: 'dayGridMonth',
@@ -307,15 +325,46 @@
                     dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
                     dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
                     eventClick: function(event) {
+                    $('#citaDetailsBody').html(
+                        `<p><strong>Paciente:</strong> ${event.event.title}</p>` +
+                        `<p><strong>Médico:</strong> ${event.event.extendedProps.medico}</p>` 
+                    );
+                    $('#citaDetailsModal').modal();
+                }
+                    
+                });
+                cal.render();
+
+                var lisE=document.querySelector('#lista')
+                var lis= new FullCalendar.Calendar(lisE,{
+                    initialView: 'listWeek',
+                    header: {
+                        left: 'prev,next ',
+                        center: 'title',
+                        right: 'month,listMonth'
+                    },
+                    editable: true,
+                    locale: 'es',
+                    displayEventTime: true,
+                    events: convertCitasToEvents(citas),
+                    buttonText: {
+                        month: 'Mes',
+                        listMonth: 'Lista'
+                    },
+                    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+                    eventClick: function(event) {
                         $('#citaDetailsBody').html(
-                            `<p><strong>Paciente:</strong> ${event.title}</p>` +
-                            `<p><strong>Médico:</strong> ${event.description}</p>` +
-                            `<p><strong>Estado:</strong> ${event.status}</p>`
+                            `<p><strong>Paciente:</strong> ${event.event.title}</p>` +
+                            `<p><strong>Médico:</strong> ${event.event.description}</p>` +
+                            `<p><strong>Estado:</strong> ${event.event.status}</p>`
                         );
                         $('#citaDetailsModal').modal();
                     }
                 });
-                cal.render();
+                lis.render();
 
 
                 // Configuración para la agenda semanal y diaria
@@ -339,7 +388,7 @@
                     dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
                     eventClick: function(event) {
                         $('#citaDetailsBody').html(
-                            `<p><strong>Paciente:</strong> ${event.title}</p>` +
+                            `<p><strong>Paciente:</strong> ${event.event.title}</p>` +
                             `<p><strong>Médico:</strong> ${event.description}</p>` +
                             `<p><strong>Estado:</strong> ${event.status}</p>`
                         );
@@ -387,5 +436,6 @@
             });
         });
     </script>
+    
 </body>
 </html>
