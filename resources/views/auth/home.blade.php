@@ -233,7 +233,7 @@
                             <label for="paciente">Paciente</label>
                             <select id="paciente" name="paciente" class="form-control">
                                 @foreach($pacientes as $paciente)
-                                    <option value="{{ $paciente->nombre }}">{{ $paciente->nombre }}</option>
+                                    <option value="{{ $paciente->nombre }}">{{ $paciente->nombre }} {{ $paciente->apellido }}</option>
                                 @endforeach
                             </select>
                         </div>

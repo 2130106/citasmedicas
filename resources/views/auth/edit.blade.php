@@ -104,7 +104,11 @@
         @if (Auth::user()->role=='admin')
             <a href="{{ route('medicos.index') }}">Médicos</a> 
         @endif
+        <a href="#">Servicios</a>
         @if (Auth::user()->role=='doctor')
+            <a href="{{ route('consultas.index') }}">Registro de consultas. </a> 
+        @endif
+        @if (Auth::user()->role=='admin')
             <a href="{{ route('consultas.index') }}">Registro de consultas. </a> 
         @endif
 
