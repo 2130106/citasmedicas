@@ -99,7 +99,7 @@
         @if (Auth::user()->role=='admin')
             <a href="{{ route('medicos.index') }}">Médicos</a> 
         @endif
-        <a href="#">Servicios</a>
+        <a href="{{ route('servicios.index') }}">servicios</a>
         @if (Auth::user()->role=='doctor')
             <a href="{{ route('consultas.index') }}">Registro de consultas. </a> 
         @endif
@@ -312,6 +312,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
 
     <script>
+         document.getElementById('user-info-btn').addEventListener('click', function() {
+            window.location.href = "{{ route('user.edit') }}";
+        });
     $(document).ready(function() {
         // Función para cargar citas desde el servidor
         function fetchCitas() {

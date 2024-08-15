@@ -105,7 +105,7 @@
         @if (Auth::user()->role=='admin')
             <a href="{{ route('medicos.index') }}">Médicos</a> 
         @endif
-        <a href="#">Servicios</a>
+        <a href="{{ route('servicios.index') }}">servicios</a>
         @if (Auth::user()->role=='doctor')
             <a href="{{ route('consultas.index') }}">Registro de consultas. </a> 
         @endif
@@ -115,9 +115,7 @@
 
     <div class="content">
         <div class="header">
-            <div class="search-bar">
-                <input type="text" placeholder="Buscar...">
-            </div>
+            
             <div class="user-info">
                 <img src="{{ asset('img/logoconsultorio.jpeg') }}" alt="User Image">
                 <form id="logout-form" action="{{ route('logout') }}" method="POST">
@@ -233,6 +231,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
     <script>
+         document.getElementById('user-info-btn').addEventListener('click', function() {
+            window.location.href = "{{ route('user.edit') }}";
+        });
         $(document).ready(function() {
             // Handle add paciente form submission
             $('#addPacienteForm').on('submit', function(event) {

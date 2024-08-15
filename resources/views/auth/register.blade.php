@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
-            background-color: #f8f9fa;
+            background: linear-gradient(135deg, #9370DB, #f8f9fa);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -15,7 +15,6 @@
             font-family: Arial, sans-serif;
         }
         .card-wrapper {
-            background-color: #d3d3d3;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -27,16 +26,15 @@
             border-radius: 10px;
             background-color: #ffffff;
             max-height: 90vh; 
-            overflow: auto; 
+            overflow: hidden; 
         }
         .card-body {
             flex: 1;
             padding: 20px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             font-size: 14px;
-            overflow-y: scroll; 
+            overflow-y: auto;
         }
         .image {
             flex: 1;
@@ -58,10 +56,19 @@
         }
         .form-group {
             margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
         }
-        .card-header {
-            font-size: 20px;
-            text-align: center;
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+        }
+        .form-row .col {
+            flex: 1;
+            margin-right: 10px;
+        }
+        .form-row .col:last-child {
+            margin-right: 0;
         }
         .btn-link {
             display: block;
@@ -73,13 +80,18 @@
         }
         input[type="text"], input[type="email"], input[type="password"] {
             border-radius: 5px;
+            padding: 8px;
+            width: 100%;
         }
         select {
             border-radius: 5px;
+            padding: 8px;
+            width: 100%;
         }
         .btn-group {
             display: flex;
             justify-content: space-between;
+            margin-top: 20px;
         }
         .btn-group .btn {
             flex: 1;

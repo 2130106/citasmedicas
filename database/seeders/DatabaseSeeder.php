@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use App\Models\Servicio;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Paciente;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -58,6 +58,37 @@ class DatabaseSeeder extends Seeder
         Servicio::create(['nombre' => 'medicamento', 'precio' => 200]);
         Servicio::create(['nombre' => 'consulta psicologica', 'precio' => 30]);
         Servicio::create(['nombre' => 'tiempo extra de consulta', 'precio' => 50]);
+
+        Paciente::create([
+            'nombre' => 'Carlos',
+            'apellido' => 'Gonzalez',
+            'genero' => 'Masculino',
+            'fecha_nac' => '1985-06-15',
+            'edad' => 38,
+            'email' => 'carlos.gonzalez@example.com',
+            'telefono' => '555-1234',
+        ]);
+
+        Paciente::create([
+            'nombre' => 'Ana',
+            'apellido' => 'Martinez',
+            'genero' => 'Femenino',
+            'fecha_nac' => '1990-04-10',
+            'edad' => 34,
+            'email' => 'ana.martinez@example.com',
+            'telefono' => '555-5678',
+        ]);
+
+        Paciente::create([
+            'nombre' => 'Luis',
+            'apellido' => 'Ramirez',
+            'genero' => 'Masculino',
+            'fecha_nac' => '2000-01-20',
+            'edad' => 24,
+            'email' => 'luis.ramirez@example.com',
+            'telefono' => '555-8765',
+        ]);
+
     }
 
 }

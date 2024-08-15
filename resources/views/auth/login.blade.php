@@ -5,12 +5,13 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
-            background-color: #f8f9fa;
+            background: linear-gradient(135deg, #9370DB, #f8f9fa);
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
+            font-family: Arial, sans-serif;
         }
         .card {
             display: flex;
