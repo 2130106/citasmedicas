@@ -6,6 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Cita extends Model
 {
+    public function paciente()
+    {
+        return $this->belongsTo(Paciente::class);
+    }
+
+    public function medico()
+    {
+        return $this->belongsTo(Medico::class);
+    }
+    
     use HasFactory;
 
     protected $fillable = [

@@ -11,8 +11,8 @@ class CreateCitasTable extends Migration
             $table->id();
             $table->date('fecha');
             $table->time('hora');
-            $table->string('paciente');
-            $table->string('medico');
+            $table->unsignedBigInteger('paciente');
+            $table->unsignedBigInteger('medico'); 
             $table->string('consultorio');
             $table->integer('estado')->default(2); // 2 = pendiente
             $table->timestamps();

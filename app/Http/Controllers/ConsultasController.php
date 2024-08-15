@@ -6,9 +6,13 @@ use Illuminate\Http\Request;
 use App\Models\Consulta;
 use App\Models\Servicio;
 use App\Models\Cita;
+use App\Models\Paciente;
+use App\Models\User;
 
 class ConsultasController extends Controller
 {
+
+    
     public function index()
     {
         $consultas = Consulta::all();
@@ -119,15 +123,16 @@ class ConsultasController extends Controller
         }
     }
 
-
-
     public function show($id)
-    {
-        $cita = Cita::findOrFail($id);
-        $consulta = Consulta::where('cita_id', $id)->first(); // O usa `find($consulta_id)`
-        $servicios = Servicio::all();
-        return view('auth.registro_consulta', compact('cita','servicios','consulta'));
-    }
+{
+    $cita = Cita::with('paciente', 'medico')->findOrFail($id);
+    $paciente = Paciente::findOrFail($cita->paciente);
+    $doctor = User::findOrFail($cita->medico);
+    $consulta = Consulta::where('cita_id', $id)->first();
+    $servicios = Servicio::all();
+
+    return view('auth.registro_consulta', compact('cita', 'servicios', 'consulta','doctor','paciente'));
+}
 
     private function calculateTotal($servicios)
     {

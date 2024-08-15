@@ -137,7 +137,41 @@
                     <form method="POST" action="{{ route('consultas.store') }}">
                         @csrf
                         <input type="hidden" name="cita_id" value="{{ $cita->id }}">
-                        
+                        <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Datos del Paciente</h5>
+                    <div class="form-group">
+                        <label for="nombre_paciente">Nombre:</label>
+                        <input type="text" class="form-control" id="nombre_paciente" value="{{ $paciente->nombre }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="apellido_paciente">Apellido:</label>
+                        <input type="text" class="form-control" id="apellido_paciente" value="{{ $paciente->apellido }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="genero_paciente">Género:</label>
+                        <input type="text" class="form-control" id="genero_paciente" value="{{ $paciente->genero }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="email_paciente">Email:</label>
+                        <input type="email" class="form-control" id="email_paciente" value="{{ $paciente->email }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="edad_paciente">Edad:</label>
+                        <input type="number" class="form-control" id="edad_paciente" value="{{ $paciente->edad }}" readonly>
+                    </div>
+
+                    <h5 class="card-title mt-4">Datos del Doctor</h5>
+                    <div class="form-group">
+                        <label for="nombre_doctor">Nombre Completo:</label>
+                        <input type="text" class="form-control" id="nombre_doctor" value="{{ $doctor->name }} {{ $doctor->apellido1 }} {{ $doctor->apellido2 }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="email_doctor">Email:</label>
+                        <input type="email" class="form-control" id="email_doctor" value="{{ $doctor->email }}" readonly>
+                    </div>
+                </div>
+            </div>
                         <div class="card-header bg-info text-white mt-4">
                             Historial clínico
                         </div>
@@ -209,7 +243,7 @@
                         <div class="form-group text-center">
                             <button type="submit" class="btn btn-primary">Guardar</button>
                         </div>
-                        <a href="{{ route('consultas.download', ['id' => $consulta->id]) }}" class="btn btn-primary">Descargar PDF</a>
+                        <a href="{{ route('consultas.download', ['id' => $cita->id]) }}" class="btn btn-primary">Descargar PDF</a>
 
                     </form>
                 </div>

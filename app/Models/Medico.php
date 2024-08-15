@@ -8,6 +8,10 @@ class Medico extends Model
 {
     use HasFactory;
 
+    public function citas()
+    {
+        return $this->hasMany(Cita::class);
+    }
     protected $fillable = [
         'nombre', 'apellido', 'especialidad', 'consultorio','edad',
     ];
