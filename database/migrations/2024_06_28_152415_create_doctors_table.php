@@ -11,7 +11,6 @@ class CreateDoctorsTable extends Migration
             $table->id();
             $table->string('nombre');
             $table->string('apellido');
-            $table->integer('edad');
             $table->string('especialidad');
             $table->string('consultorio');
             $table->timestamps();

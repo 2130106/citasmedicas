@@ -5,6 +5,12 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CitaController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ConsultasController;
+use App\Http\Controllers\ServicioController;
+use App\Http\Controllers\PDFController;
+
+// Ruta para descargar el PDF
+Route::get('/consultas/download/{id}', [PDFController::class, 'downloadConsultationForm'])->name('consultas.download');
+
 
 Route::get('/', function () {
     return view('auth.login');
@@ -17,6 +23,8 @@ Route::get('/vista-doctor', function () {
 Route::get('/vista-secretaria', function () {
     return view('citas.index');
 })->name('citas.index');
+
+Route::get('/consultas/export-pdf/{id}', [ConsultasController::class, 'exportPDF'])->name('consultas.exportPDF');
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
@@ -59,11 +67,26 @@ Route::middleware('auth')->group(function () {
     Route::get('/user/edit', [UserController::class, 'edit'])->name('user.edit');
     Route::put('/user/update', [UserController::class, 'update'])->name('user.update');
 
-
+    Route::get('/consultas/export-pdf/{id}', [ConsultasController::class, 'exportPDF'])->name('consultas.exportPDF');
 
     Route::get('/consultas', [ConsultasController::class, 'index'])->name('consultas.index');
     Route::get('/consultas/create', [ConsultasController::class, 'create'])->name('consultas.create');
-    Route::post('/consultas', [ConsultasController::class, 'store'])->name('consultas.store');
+    Route::post('/consultas/store', [ConsultasController::class, 'store'])->name('consultas.store');
+    Route::get('/consultas/{id}', [ConsultasController::class, 'show'])->name('consultas.show');
+
+
+    // routes/web.php
+
+
+
+// Ruta para mostrar la lista de servicios
+Route::get('/servicios', [ServicioController::class, 'index'])->name('servicios.index');
+
+// Ruta para almacenar un nuevo servicio
+Route::post('/servicios', [ServicioController::class, 'store'])->name('servicios.store');
+
+// Ruta para eliminar un servicio
+Route::delete('/servicios/{id}', [ServicioController::class, 'destroy'])->name('servicios.destroy');
 
 });
 

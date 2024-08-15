@@ -86,6 +86,9 @@
             text-align: right;
             padding: 20px;
         }
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -102,20 +105,16 @@
         @endif
         <a href="#">Servicios</a>
         @if (Auth::user()->role=='doctor')
-            <a href="{{ route('consultas.index') }}">Registro de consultas. </a> 
-        @endif
-        @if (Auth::user()->role=='admin')
-            <a href="{{ route('consultas.index') }}">Registro de consultas. </a> 
+            <a href="{{ route('consultas.index') }}">Registro de consultas</a> 
         @endif
     </div>
 
     <div class="content">
         <div class="header">
-            <div class="search-bar">
-                <input type="text" placeholder="Buscar...">
-            </div>
             <div class="user-info">
                 <img src="{{ asset('img/logoconsultorio.jpeg') }}" alt="User Image">
+                <button class="btn btn-link" id="user-info-btn">{{ Auth::user()->name }}</button>
+
                 <form id="logout-form" action="{{ route('logout') }}" method="POST">
                     @csrf
                     <button type="submit" class="btn btn-link text-white">Cerrar Sesión</button>
@@ -123,85 +122,130 @@
             </div>
         </div>
         <div class="main-content">
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
             <h1 class="mb-4">Registro de Consultas</h1>
             <div class="card">
-                <div class="card-header bg-primary text-white">
-                    Datos del paciente
-                </div>
                 <div class="card-body">
                     <form method="POST" action="{{ route('consultas.store') }}">
                         @csrf
-                        <div class="form-group">
-                            <label for="nombre">Nombre(s)</label>
-                            <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre(s)" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="apellido_paterno">Apellido Paterno</label>
-                            <input type="text" class="form-control" id="apellido_paterno" name="apellido_paterno" placeholder="Apellido Paterno" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="apellido_materno">Apellido Materno</label>
-                            <input type="text" class="form-control" id="apellido_materno" name="apellido_materno" placeholder="Apellido Materno">
-                        </div>
-                        <div class="form-group">
-                            <label for="fecha_nacimiento">Fecha de nacimiento</label>
-                            <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="edad">Edad</label>
-                            <input type="number" class="form-control" id="edad" name="edad" placeholder="Edad" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="sexo">Sexo</label>
-                            <select class="form-control" id="sexo" name="sexo" required>
-                                <option value="masculino">Masculino</option>
-                                <option value="femenino">Femenino</option>
-                            </select>
-                        </div>
+                        <input type="hidden" name="cita_id" value="{{ $cita->id }}">
+                        
                         <div class="card-header bg-info text-white mt-4">
                             Historial clínico
                         </div>
                         <div class="form-group mt-4">
                             <label for="alergias">¿Tiene alergias?</label>
                             <select class="form-control" id="alergias" name="alergias" onchange="toggleField('alergias', 'alergias_detalle')" required>
-                                <option value="no">No</option>
-                                <option value="si">Sí</option>
+                                <option value="no" {{ isset($consulta) && $consulta->alergias == 'no' ? 'selected' : '' }}>No</option>
+                                <option value="si" {{ isset($consulta) && $consulta->alergias == 'si' ? 'selected' : '' }}>Sí</option>
                             </select>
                         </div>
                         <div class="form-group hidden" id="alergias_detalle">
                             <label for="alergias_texto">Detalle de alergias</label>
-                            <textarea class="form-control" id="alergias_texto" name="alergias_texto" placeholder="Detalle de alergias"></textarea>
+                            <textarea class="form-control" id="alergias_texto" name="alergias_texto" placeholder="Detalle de alergias">{{ $consulta->alergias_texto ?? '' }}</textarea>
                         </div>
                         <div class="form-group">
                             <label for="enfermedades">¿Tiene enfermedades?</label>
                             <select class="form-control" id="enfermedades" name="enfermedades" onchange="toggleField('enfermedades', 'enfermedades_detalle')" required>
-                                <option value="no">No</option>
-                                <option value="si">Sí</option>
+                                <option value="no" {{ isset($consulta) && $consulta->enfermedades == 'no' ? 'selected' : '' }}>No</option>
+                                <option value="si" {{ isset($consulta) && $consulta->enfermedades == 'si' ? 'selected' : '' }}>Sí</option>
                             </select>
                         </div>
                         <div class="form-group hidden" id="enfermedades_detalle">
                             <label for="enfermedades_texto">Detalle de enfermedades</label>
-                            <textarea class="form-control" id="enfermedades_texto" name="enfermedades_texto" placeholder="Detalle de enfermedades"></textarea>
+                            <textarea class="form-control" id="enfermedades_texto" name="enfermedades_texto" placeholder="Detalle de enfermedades">{{ $consulta->enfermedades_texto ?? '' }}</textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary">Registrar Consulta</button>
+
+                        <div class="form-group">
+                            <label for="estatura">Estatura (cm)</label>
+                            <input type="number" class="form-control" id="estatura" name="estatura" placeholder="Estatura en cm" step="0.1" value="{{ $consulta->estatura ?? '' }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="peso">Peso (kg)</label>
+                            <input type="number" class="form-control" id="peso" name="peso" placeholder="Peso en kg" step="0.1" value="{{ $consulta->peso ?? '' }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="temperatura">Temperatura (°C)</label>
+                            <input type="number" class="form-control" id="temperatura" name="temperatura" placeholder="Temperatura en °C" step="0.1" value="{{ $consulta->temperatura ?? '' }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="motivo_consulta">Motivo de la consulta</label>
+                            <textarea class="form-control" id="motivo_consulta" name="motivo_consulta" placeholder="Motivo de la consulta">{{ $consulta->motivo_consulta ?? '' }}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="notas">Notas adicionales</label>
+                            <textarea class="form-control" id="notas" name="notas" placeholder="Notas adicionales">{{ $consulta->notas ?? '' }}</textarea>
+                        </div>
+                        
+                        <!-- Nueva Sección: Selección de Servicios -->
+                        <div class="card-header bg-secondary text-white mt-4">
+                            Servicios
+                        </div>
+                        <div class="form-group mt-4">
+                            <label>Selecciona los servicios:</label>
+                            @foreach($servicios as $servicio)
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="servicio_{{ $servicio->id }}" name="servicios[]" value="{{ $servicio->id }}" data-precio="{{ $servicio->precio }}"
+                                       {{ isset($consulta) && $consulta->servicios->contains('id', $servicio->id) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="servicio_{{ $servicio->id }}">
+                                        {{ $servicio->nombre }} - ${{ $servicio->precio }}
+                                    </label>
+                                </div>
+                            @endforeach
+                        </div>
+                        <div class="form-group">
+                            <label for="total">Total</label>
+                            <input type="text" class="form-control" id="total" name="total" placeholder="0.0" readonly value="{{ $consulta->total ?? '0.0' }}">
+                        </div>
+                        
+                        <div class="form-group text-center">
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+                        <a href="{{ route('consultas.download', ['id' => $consulta->id]) }}" class="btn btn-primary">Descargar PDF</a>
+
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
+        // Función para mostrar/ocultar campos basados en la selección
         function toggleField(selectId, fieldId) {
-            var select = document.getElementById(selectId);
-            var field = document.getElementById(fieldId);
-            if (select.value === 'si') {
-                field.classList.remove('hidden');
+            const selectElement = document.getElementById(selectId);
+            const fieldElement = document.getElementById(fieldId);
+            if (selectElement.value === 'si') {
+                fieldElement.classList.remove('hidden');
             } else {
-                field.classList.add('hidden');
+                fieldElement.classList.add('hidden');
             }
         }
+
+        // Inicializa el estado de los campos basados en el valor actual
+        document.addEventListener('DOMContentLoaded', function() {
+            toggleField('alergias', 'alergias_detalle');
+            toggleField('enfermedades', 'enfermedades_detalle');
+        });
+
+        // Actualiza el total basado en los servicios seleccionados
+        document.addEventListener('change', function(e) {
+            if (e.target.classList.contains('form-check-input')) {
+                const checkboxes = document.querySelectorAll('.form-check-input:checked');
+                let total = 0;
+                checkboxes.forEach(checkbox => {
+                    total += parseFloat(checkbox.getAttribute('data-precio'));
+                });
+                document.getElementById('total').value = total.toFixed(2);
+            }
+        });
     </script>
 </body>
 </html>

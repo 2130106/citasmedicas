@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Paciente; 
 use App\Models\Medico; // Importar el modelo Medico
 use App\Models\Cita;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -50,14 +51,21 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
+
+        Log::debug($request->consultorio);
+
         $request->validate([
             'name' => 'required|string|max:255',
             'apellido1' => 'required|string|max:255',
             'apellido2' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => 'required|string|min:7|confirmed',
             'sexo' => 'required|integer|between:0,2',
             'role' => 'required|in:doctor,secretaria',
+            'especialidad' => 'nullable|string|max:255',
+            'consultorio' => 'nullable|string|max:255',
+
+
         ]);
 
         $user = User::create([
@@ -68,6 +76,8 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
             'sexo' => $request->sexo,
             'role' => $request->role,
+            'consultorio' => $request->consultorio,
+            'especialidad' => $request->especialidad,
         ]);
 
         return redirect()->intended('home');
@@ -76,7 +86,7 @@ class AuthController extends Controller
     public function home()
     {
         $pacientes = Paciente::all();
-        $medicos = Medico::all();
+        $medicos = User::where('role','doctor')->get();
         $citas = Cita::all();
         return view('auth.home', compact('pacientes','medicos','citas'));
     }
@@ -89,7 +99,7 @@ class AuthController extends Controller
 
     public function showMedicos()
     {
-        $medicos = Medico::all();
+        $medicos = User::where('role','doctor')->get();
         return view('auth.medico', compact('medicos'));
     }
 

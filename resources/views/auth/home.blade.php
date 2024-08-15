@@ -150,20 +150,15 @@
         @if (Auth::user()->role=='admin')
             <a href="{{ route('medicos.index') }}">Médicos</a> 
         @endif
-        <a href="#">Servicios</a>
+        <a href="{{ route('servicios.index') }}">servicios</a>
         @if (Auth::user()->role=='doctor')
             <a href="{{ route('consultas.index') }}">Registro de consultas. </a> 
         @endif
-        @if (Auth::user()->role=='admin')
-            <a href="{{ route('consultas.index') }}">Registro de consultas. </a> 
-        @endif
+       
     </div>
 
     <div class="content">
         <div class="header">
-            <div class="search-bar">
-                <input type="text" placeholder="Buscar...">
-            </div>
             <div class="user-info">
                 <img src="{{ asset('img/logoconsultorio.jpeg') }}" alt="User Image">
                 <form id="logout-form" action="{{ route('logout') }}" method="POST">
@@ -242,7 +237,7 @@
                             <select id="medico" name="medico" class="form-control" required>
                                 <option value="">Seleccione un médico</option>
                                 @foreach ($medicos as $medico)
-                                    <option value="{{ $medico->id }}" data-consultorio="{{ $medico->consultorio }}">{{ $medico->nombre }} {{ $medico->apellido }}</option>
+                                    <option value="{{ $medico->id }}" data-consultorio="{{ $medico->consultorio }}">{{ $medico->name }} {{ $medico->apellido1 }} {{ $medico->apellido2 }}</option>
                                 @endforeach
                             </select>
                         </div>

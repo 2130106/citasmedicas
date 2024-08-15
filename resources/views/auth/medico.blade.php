@@ -94,7 +94,7 @@
     <div class="sidebar">
         <div class="user-info text-center p-3">
             <img src="{{ asset('img/logoconsultorio.jpeg') }}" alt="User Image">
-            <span>{{ Auth::user()->name }}</span>
+            <button class="btn btn-link" id="user-info-btn">{{ Auth::user()->name }}</button>
         </div>
         <a href="{{ route('home') }}">Agenda</a>
         <a href="{{ route('citas.index') }}">Citas</a>
@@ -106,16 +106,11 @@
         @if (Auth::user()->role=='doctor')
             <a href="{{ route('consultas.index') }}">Registro de consultas. </a> 
         @endif
-        @if (Auth::user()->role=='admin')
-            <a href="{{ route('consultas.index') }}">Registro de consultas. </a> 
-        @endif
+       
     </div>
 
     <div class="content">
         <div class="header">
-            <div class="search-bar">
-                <input type="text" placeholder="Buscar...">
-            </div>
             <div class="user-info">
                 <img src="{{ asset('img/logoconsultorio.jpeg') }}" alt="User Image">
                 <form id="logout-form" action="{{ route('logout') }}" method="POST">
@@ -126,31 +121,24 @@
         </div>
         <div class="main-content">
             <h1 class="mb-4">Médicos</h1>
-            <div class="add-button">
-                <button class="btn btn-primary" data-toggle="modal" data-target="#addMedicoModal">Agregar Médico</button>
-            </div>
             <div class="table-container">
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th>#</th>
                             <th>Nombre</th>
-                            <th>Apellido</th>
+                            <th>Apellidos</th>
                             <th>Especialidad</th>
                             <th>Consultorio</th>
-                            <th>Edad</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($medicos as $medico)
                         <tr>
-                            <td>{{ $medico->id }}</td>
-                            <td>{{ $medico->nombre }}</td>
-                            <td>{{ $medico->apellido }}</td>
+                            <td>{{ $medico->name }}</td>
+                            <td>{{ $medico->apellido1 }} {{ $medico->apellido2 }}</td>
                             <td>{{ $medico->especialidad }}</td>
                             <td>{{ $medico->consultorio }}</td>
-                            <td>{{ $medico->edad }}</td>
                             <td>
                                 <form action="{{ route('medicos.destroy', $medico->id) }}" method="POST">
                                     @csrf
@@ -163,50 +151,6 @@
                     </tbody>
                 </table>
             </div>
-
-            <!-- Modal para agregar médico -->
-            <div class="modal fade" id="addMedicoModal" tabindex="-1" role="dialog" aria-labelledby="addMedicoModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="addMedicoModalLabel">Agregar Médico</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <form action="{{ route('medicos.store') }}" method="POST" id="addMedicoForm">
-                            @csrf
-                            <div class="modal-body">
-                                <div class="form-group">
-                                    <label for="nombre">Nombre</label>
-                                    <input type="text" id="nombre" name="nombre" class="form-control" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="apellido">Apellido</label>
-                                    <input type="text" id="apellido" name="apellido" class="form-control" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="especialidad">Especialidad</label>
-                                    <input type="text" id="especialidad" name="especialidad" class="form-control" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="consultorio">Consultorio</label>
-                                    <input type="text" id="consultorio" name="consultorio" class="form-control" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="edad">Edad</label>
-                                    <input type="number" id="edad" name="edad" class="form-control" required>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                <button type="submit" class="btn btn-primary">Guardar Médico</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </div>
 
@@ -217,7 +161,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
     <script>
         $(document).ready(function() {
-            // Handle add medico form submission
             $('#addMedicoForm').on('submit', function(event) {
                 event.preventDefault();
                 const formData = $(this).serialize();
@@ -228,7 +171,7 @@
                     data: formData,
                     success: function(response) {
                         $('#addMedicoModal').modal('hide');
-                        location.reload(); // Refresh page to show updated list
+                        location.reload();
                     },
                     error: function(xhr, status, error) {
                         console.error(xhr.responseText);

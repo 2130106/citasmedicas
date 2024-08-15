@@ -19,10 +19,10 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->timestamps();
-            $table->integer('sexo')->default(2); // 0: Hombre, 1: Mujer, 2: No prefiero especificar
-            $table->string('role')->default('secretaria'); // Puede ser 'doctor' o 'secretaria'
-            $table->string('especialidad')->nullable(); // Solo para doctores
-            $table->string('consultorio')->nullable(); // Solo para doctores
+            $table->integer('sexo')->default(2);
+            $table->string('role')->default('secretaria'); 
+            $table->string('consultorio')->nullable(); 
+            $table->string('especialidad')->nullable();
         });
 
         Schema::create('sessions', function (Blueprint $table) {

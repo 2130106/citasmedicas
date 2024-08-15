@@ -96,7 +96,7 @@
     <div class="sidebar">
         <div class="user-info text-center p-3">
             <img src="{{ asset('img/logoconsultorio.jpeg') }}" alt="User Image">
-            <span>{{ Auth::user()->name }}</span>
+            <button class="btn btn-link" id="user-info-btn">{{ Auth::user()->name }}</button>
         </div>
         <a href="{{ route('home') }}">Agenda</a>
         <a href="{{ route('citas.index') }}">Citas</a>
@@ -116,9 +116,6 @@
 
     <div class="content">
         <div class="header">
-            <div class="search-bar">
-                <input type="text" placeholder="Buscar...">
-            </div>
             <div class="user-info">
                 <img src="{{ asset('img/logoconsultorio.jpeg') }}" alt="User Image">
                 <form id="logout-form" action="{{ route('logout') }}" method="POST">

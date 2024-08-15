@@ -41,7 +41,6 @@
         }
         .content {
             flex: 1;
-            padding: 20px;
         }
         .user-info {
             background-color: #9370DB;
@@ -92,7 +91,7 @@
     <div class="sidebar">
         <div class="user-info text-center p-3">
             <img src="{{ asset('img/logoconsultorio.jpeg') }}" alt="User Image">
-            <span>{{ Auth::user()->name }}</span>
+            <button class="btn btn-link" id="user-info-btn">{{ Auth::user()->name }}</button>
         </div>
         <a href="{{ route('home') }}">Agenda</a>
         <a href="{{ route('citas.index') }}">Citas</a>
@@ -104,11 +103,19 @@
         @if (Auth::user()->role=='doctor')
             <a href="{{ route('consultas.index') }}">Registro de consultas. </a> 
         @endif
-        @if (Auth::user()->role=='admin')
-            <a href="{{ route('consultas.index') }}">Registro de consultas. </a> 
-        @endif
+     
         
     </div>
+    <div class="content">
+        <div class="header">
+            <div class="user-info">
+                <img src="{{ asset('img/logoconsultorio.jpeg') }}" alt="User Image">
+                <form id="logout-form" action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="btn btn-link text-white">Cerrar Sesión</button>
+                </form>
+            </div>
+        </div>
     <div class="table-container">
         <h2>Citas</h2>
         <table class="table table-striped">
@@ -155,141 +162,155 @@
 
                     </td>
                     <td>
-                        <a href="{{ route('consultas.index') }}" class="btn btn-primary btn-sm">Ver Consulta</a>
+                        <a href="{{ route('consultas.show', $cita->id) }}" class="btn btn-primary btn-sm">Ver Consulta</a>
                     </td>
                 </tr>
                 <div class="modal fade" id="editCitaModal{{ $cita->id }}" tabindex="-1" role="dialog" aria-labelledby="editCitaModalLabel{{ $cita->id }}" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="editCitaModalLabel{{ $cita->id }}">Modificar Cita</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editCitaModalLabel{{ $cita->id }}">Modificar Cita</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form action="{{ route('citas.update', $cita->id) }}" method="POST">
+                            @csrf
+                            @method('PUT')
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="fecha">Fecha</label>
+                                    <input type="text" id="fecha" name="fecha" class="form-control" value="{{ $cita->fecha }}" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label for="hora">Hora</label>
+                                    <input type="time" id="hora" name="hora" class="form-control" value="{{ $cita->hora }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="paciente">Paciente</label>
+                                    <select id="paciente" name="paciente" class="form-control">
+                                        @foreach($pacientes as $paciente)
+                                            <option value="{{ $paciente->id }}" {{ $cita->paciente == $paciente->id ? 'selected' : '' }}>{{ $paciente->nombre }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="medico">Médico</label>
+                                    <select id="medico{{ $cita->id }}" name="medico" class="form-control">
+                                        @foreach($medicos as $medico)
+                                            <option value="{{ $medico->id }}" data-consultorio="{{ $medico->consultorio }}" {{ $cita->medico == $medico->id ? 'selected' : '' }}>
+                                                {{ $medico->name }} {{ $medico->apellido1 }} {{ $medico->apellido2 }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="consultorio">Consultorio</label>
+                                    <input type="text" id="consultorio{{ $cita->id }}" name="consultorio" class="form-control" value="{{ $cita->consultorio }}" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label for="estado">Estado</label>
+                                    <select id="estado" name="estado" class="form-control">
+                                        <option value="1" {{ $cita->estado == 1 ? 'selected' : '' }}>Pendiente</option>
+                                        <option value="2" {{ $cita->estado == 2 ? 'selected' : '' }}>Cancelada</option>
+                                        <option value="3" {{ $cita->estado == 3 ? 'selected' : '' }}>Activa</option>
+                                    </select>
+                                </div>
                             </div>
-                            <form action="{{ route('citas.update', $cita->id) }}" method="POST">
-                                @csrf
-                                @method('PUT')
-                                <div class="modal-body">
-                                    <div class="form-group">
-                                        <label for="fecha">Fecha</label>
-                                        <input type="text" id="fecha" name="fecha" class="form-control" value="{{ $cita->fecha }}" readonly>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="hora">Hora</label>
-                                        <input type="time" id="hora" name="hora" class="form-control" value="{{ $cita->hora }}">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="paciente">Paciente</label>
-                                        <select id="paciente" name="paciente" class="form-control">
-                                            @foreach($pacientes as $paciente)
-                                                <option value="{{ $paciente->nombre }}" {{ $cita->paciente == $paciente->nombre ? 'selected' : '' }}>{{ $paciente->nombre }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="medico">Médico</label>
-                                        <select id="medico" name="medico" class="form-control">
-                                            @foreach($medicos as $medico)
-                                                <option value="{{ $medico->id }}" data-consultorio="{{ $medico->consultorio }}" {{ $cita->medico == $medico->nombre ? 'selected' : '' }}>{{ $medico->nombre }} {{ $medico->apellido }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="consultorio">Consultorio</label>
-                                        <input type="text" id="consultorio" name="consultorio" class="form-control" value="{{ $cita->consultorio }}" readonly>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="estado">Estado</label>
-                                        <select id="estado" name="estado" class="form-control">
-                                            <option value="1" {{ $cita->estado == 1 ? 'selected' : '' }}>Pendiente</option>
-                                            <option value="2" {{ $cita->estado == 2 ? 'selected' : '' }}>Cancelada</option>
-                                            <option value="3" {{ $cita->estado == 3 ? 'selected' : '' }}>Activa</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                                </div>
-                            </form>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                            </div>
+                        </form>
                         </div>
                     </div>
                 </div>
-
                 @endforeach
             </tbody>
-        </table>
+    </table>
     </div>
 
+    @if ($errors->has('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ $errors->first('error') }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+@endif
     <div class="add-button">
         <button class="btn btn-primary" data-toggle="modal" data-target="#addCitaModal">Agregar Cita</button>
     </div>
 
     <div class="modal fade" id="addCitaModal" tabindex="-1" role="dialog" aria-labelledby="addCitaModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addCitaModalLabel">Agregar Cita</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <form action="{{ route('citas.store') }}" method="POST" id="addCitaForm">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="fecha">Fecha</label>
-                            <input type="text" id="fecha" name="fecha" class="form-control" placeholder="Selecciona la fecha..." readonly>
-                        </div>
-                        <div class="form-group">
-                            <label for="hora">Hora</label>
-                            <input type="time" id="hora" name="hora" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="paciente">Paciente</label>
-                            <select id="paciente" name="paciente" class="form-control">
-                                @foreach($pacientes as $paciente)
-                                    <option value="{{ $paciente->nombre }}">{{ $paciente->nombre }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="medico">Médico</label>
-                            <select id="medico" name="medico" class="form-control" required>
-                                <option value="">Seleccione un médico</option>
-                                @foreach ($medicos as $medico)
-                                    <option value="{{ $medico->id }}" data-consultorio="{{ $medico->consultorio }}">{{ $medico->nombre }} {{ $medico->apellido }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="consultorio">Consultorio</label>
-                            <input type="text" id="consultorio" name="consultorio" class="form-control" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label for="estado">Estado</label>
-                            <select id="estado" name="estado" class="form-control">
-                                <option value="2">Pendiente</option>
-                                <option value="1">Confirmada</option>
-                                <option value="3">Cancelada</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-primary">Guardar Cita</button>
-                    </div>
-                </form>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCitaModalLabel">Agregar Cita</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
+            <form action="{{ route('citas.store') }}" method="POST" id="addCitaForm">
+                @csrf
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="fecha">Fecha</label>
+                        <input type="text" id="fecha" name="fecha" class="form-control" placeholder="Selecciona la fecha..." readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="hora">Hora</label>
+                        <input type="time" id="hora" name="hora" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="paciente">Paciente</label>
+                        <select id="paciente" name="paciente" class="form-control">
+                            @foreach($pacientes as $paciente)
+                                <option value="{{ $paciente->nombre }}">{{ $paciente->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="medico">Médico</label>
+                        <select id="medico" name="medico" class="form-control" required>
+                            <option value="">Seleccione un médico</option>
+                            @foreach ($medicos as $medico)
+                                <option value="{{ $medico->id }}" data-consultorio="{{ $medico->consultorio }}">
+                                    {{ $medico->name }} {{ $medico->apellido1 }} {{ $medico->apellido2 }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="consultorio">Consultorio</label>
+                        <input type="text" id="consultorio" name="consultorio" class="form-control" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="estado">Estado</label>
+                        <select id="estado" name="estado" class="form-control">
+                            <option value="2">Pendiente</option>
+                            <option value="1">Confirmada</option>
+                            <option value="3">Cancelada</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Cita</button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
+
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
+
     <script>
     $(document).ready(function() {
         // Función para cargar citas desde el servidor
@@ -364,10 +385,13 @@
             initializeCalendar(data); // Si usas calendario
         });
 
-        // Autocompletar el campo "consultorio" basado en el médico seleccionado
-        $('#medico').on('change', function() {
-            var consultorio = $(this).find('option:selected').data('consultorio');
-            $('#consultorio').val(consultorio);
+        const medicoSelect = document.getElementById('medico');
+        const consultorioInput = document.getElementById('consultorio');
+
+        medicoSelect.addEventListener('change', function() {
+            const selectedOption = medicoSelect.options[medicoSelect.selectedIndex];
+            const consultorio = selectedOption.getAttribute('data-consultorio');
+            consultorioInput.value = consultorio ? consultorio : '';
         });
     });
     </script>

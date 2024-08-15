@@ -20,8 +20,10 @@ class User extends Authenticatable
         'apellido2',
         'email',
         'password',
-        'sexo', // Agregar el campo 'sexo'
-        'role', // Agregar el campo 'role'
+        'sexo',
+        'role',
+        'consultorio',
+        'especialidad',
     ];
 
     /**
